@@ -1,0 +1,18 @@
+# Vercel
+.vercel/
+.vercel
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Node (if using any build tools in future)
+node_modules/
+package-lock.json
+yarn.lock

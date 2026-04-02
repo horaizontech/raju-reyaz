@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#F8F4EE">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Raju Reyaz">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%23B8965A' width='192' height='192'/><text x='50%' y='55%' font-family='serif' font-size='120' font-weight='bold' fill='%23F8F4EE' text-anchor='middle' dominant-baseline='central'>RR</text></svg>">
+<link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;0,900;1,400;1,500;1,700&family=Jost:wght@200;300;400;500&family=Cormorant:ital,wght@0,300;1,300;1,400&display=optional" rel="stylesheet">
+<title>Raju Reyaz — The Atelier · Est. 1970</title>
+<style>
+/* ═══════════════════════════════════════════
+   DESIGN TOKENS
+═══════════════════════════════════════════ */
+:root {
+  --ivory: #F8F4EE;
+  --ivory-deep: #EDE7DC;
+  --ivory-warm: #F2EBE0;
+  --espresso: #1A1208;
+  --espresso-mid: #2D2418;
+  --espresso-light: #4A3D2E;
+  --gold: #B8965A;
+  --gold-bright: #D4AA6A;
+  --gold-muted: #9A7D4A;
+  --gold-pale: rgba(184,150,90,0.12);
+  --text: #1A1208;
+  --text-mid: #4A3D2E;
+  --text-soft: #8A7A68;
+  --text-faint: #BFB4A6;
+  --border: rgba(26,18,8,0.1);
+  --border-gold: rgba(184,150,90,0.3);
+  --pad: 28px;
+  --r: 2px;
+  --ease: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --ease-out: cubic-bezier(0.0, 0.0, 0.2, 1);
+  --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent; }
+
+body {
+  font-family: 'Jost', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--ivory);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* FONT FALLBACK SYSTEM */
+@font-face {
+  font-family: 'Playfair Display Fallback';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Georgia'), local('Garamond'), serif;
+  unicode-range: U+0020-007E;
+}
+
+/* ── CUSTOM CURSOR ── */
+#cursor {
+  position: fixed; top: 0; left: 0; z-index: 99999; pointer-events: none;
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--gold); mix-blend-mode: multiply;
+  transform: translate(-50%,-50%);
+  transition: transform 0.08s var(--ease), width 0.3s var(--spring), height 0.3s var(--spring), opacity 0.2s;
+  will-change: transform;
+}
+
+#cursor-ring {
+  position: fixed; top: 0; left: 0; z-index: 99998; pointer-events: none;
+  width: 36px; height: 36px; border-radius: 50%;
+  border: 1px solid rgba(184,150,90,0.5);
+  transform: translate(-50%,-50%);
+  transition: transform 0.18s var(--ease-out), width 0.4s var(--spring), height 0.4s var(--spring), opacity 0.3s;
+  will-change: transform;
+}
+
+body:has(a:hover) #cursor, body:has(button:hover) #cursor,
+body:has(.clickable:hover) #cursor { width: 18px; height: 18px; }
+body:has(a:hover) #cursor-ring, body:has(button:hover) #cursor-ring,
+body:has(.clickable:hover) #cursor-ring { width: 56px; height: 56px; opacity: 0.4; }
+
+/* ── SCREEN TRANSITIONS ── */
+.page { min-height: 100vh; }
+.fade-in { animation: fadeUp 0.6s var(--ease-out) both; }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(22px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.stagger-1 { animation-delay: 0.1s; }
+.stagger-2 { animation-delay: 0.2s; }
+.stagger-3 { animation-delay: 0.3s; }
+.stagger-4 { animation-delay: 0.4s; }
+.stagger-5 { animation-delay: 0.5s; }
+
+/* ── GRAIN OVERLAY ── */
+.grain::before {
+  content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  opacity: 0.35; mix-blend-mode: overlay;
+}
+
+/* ── MARQUEE ── */
+.marquee-wrap { overflow: hidden; background: var(--espresso); padding: 14px 0; }
+.marquee-track { display: flex; gap: 0; white-space: nowrap; animation: marquee 25s linear infinite; }
+.marquee-item { font-family: 'Jost', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 10px; font-weight: 300; letter-spacing: 0.35em; text-transform: uppercase; color: var(--gold); padding: 0 40px; }
+.marquee-dot { color: rgba(184,150,90,0.4); margin: 0 0; }
+@keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+/* ══════════════════════════════════════════
+   SPLASH
+══════════════════════════════════════════ */
+.splash {
+  position: relative; min-height: 100vh; overflow: hidden;
+  background: var(--ivory);
+  display: flex; flex-direction: column;
+}
+
+.splash-bg {
+  position: absolute; inset: 0; z-index: 0;
+  background: url('https://images.unsplash.com/photo-1560066984-138dadb4c035?w=1600&q=80&auto=format&fit=crop') center/cover no-repeat;
+  background-color: var(--espresso-light);
+}
+
+.splash-overlay {
+  position: absolute; inset: 0; z-index: 1;
+  background: linear-gradient(to bottom, rgba(248,244,238,0.88) 0%, rgba(248,244,238,0.72) 40%, rgba(26,18,8,0.85) 100%);
+}
+
+.splash-content {
+  position: relative; z-index: 2;
+  flex: 1; display: flex; flex-direction: column;
+  padding: 48px var(--pad) 40px;
+}
+
+.splash-top {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: auto;
+}
+
+.splash-wordmark {
+  font-family: 'Playfair Display', 'Playfair Display Fallback', serif;
+  font-size: 15px; font-weight: 700;
+  letter-spacing: 0.2em; text-transform: uppercase; color: var(--espresso);
+}
+
+.splash-est {
+  font-family: 'Jost', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 10px; font-weight: 300;
+  letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold);
+}
+
+.splash-hero-text {
+  margin: auto 0 40px;
+}
+
+.splash-hero-tag {
+  font-family: 'Jost', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 10px; font-weight: 300;
+  letter-spacing: 0.4em; text-transform: uppercase; color: var(--gold-bright);
+  margin-bottom: 16px; display: flex; align-items: center; gap: 12px;
+}
+
+.splash-hero-tag::before { content: ''; width: 24px; height: 1px; background: var(--gold-bright); }
+
+.splash-title {
+  font-family: 'Playfair Display', 'Playfair Display Fallback', serif;
+  font-size: clamp(52px, 14vw, 72px);
+  font-weight: 400; font-style: italic; line-height: 1.0;
+  color: #EFF0ED;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  margin-bottom: 8px;
+}
+
+.splash-title-plain { font-style: normal; font-weight: 700; display: block; font-size: clamp(40px, 11vw, 58px); }
+
+.splash-subtitle {
+  font-family: 'Cormorant', 'Garamond', serif;
+  font-style: italic; font-size: 17px;
+  color: rgba(255,255,255,0.75);
+  text-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  margin-bottom: 48px; line-height: 1.6;
+}
+
+.splash-cards-row { display: flex; gap: 14px; }
+
+.splash-card-v2 {
+  flex: 1; position: relative; overflow: hidden; border-radius: 3px;
+  cursor: pointer; transition: transform 0.5s var(--spring);
+  min-height: 160px;
+  background: var(--espresso-light);
+}
+
+.splash-card-v2:hover { transform: translateY(-4px); }
+.splash-card-v2:active { transform: scale(0.98); }
+
+.splash-card-bg {
+  position: absolute; inset: 0;
+  background-size: cover; background-position: center;
+  background-color: var(--espresso-light);
+  transition: transform 0.8s var(--ease-out);
+}
+
+.splash-card-v2:hover .splash-card-bg { transform: scale(1.06); }
+
+.splash-card-dim {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(26,18,8,0.92) 0%, rgba(26,18,8,0.3) 100%);
+}
+
+.splash-card-body {
+  position: relative; z-index: 1; padding: 20px 20px 24px; height: 100%;
+  display: flex; flex-direction: column; justify-content: flex-end;
+}
+
+.splash-card-label {
+  font-size: 9px; letter-spacing: 0.35em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 6px;
+  font-family: 'Jost', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-weight: 400;
+}
+
+.splash-card-v2-title {
+  font-family: 'Playfair Display', 'Playfair Display Fallback', serif;
+  font-size: 22px; font-weight: 500; color: #EFF0ED; margin-bottom: 4px;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.2);
+}
+
+.splash-card-v2-sub { font-size: 11px; color: rgba(255,255,255,0.65); font-weight: 300; }
+
+.splash-card-arrow-v2 {
+  position: absolute; top: 20px; right: 20px;
+  width: 32px; height: 32px; border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  color: #EFF0ED; transition: 0.3s var(--ease);
+}
+
+.splash-card-v2:hover .splash-card-arrow-v2 { background: var(--gold); border-color: var(--gold); color: var(--espresso); }
+
+/* ══════════════════════════════════════════
+   BOOKING APP SHELL
+══════════════════════════════════════════ */
+.app-wrap {
+  max-width: 460px; margin: 0 auto; min-height: 100vh;
+  background: var(--ivory); display: flex; flex-direction: column;
+}
+
+.app-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px var(--pad); border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; z-index: 50; background: var(--ivory);
+}
+
+.app-back { background: none; border: none; cursor: pointer; font-size: 18px; color: var(--text); padding: 8px; margin: -8px; }
+.app-title { font-family: 'Playfair Display', 'Playfair Display Fallback', serif; font-size: 18px; font-weight: 700; flex: 1; text-align: center; }
+.app-close { background: none; border: none; cursor: pointer; font-size: 20px; color: var(--text); padding: 8px; margin: -8px; }
+
+.app-body { flex: 1; overflow-y: auto; padding: var(--pad); }
+
+.app-nav {
+  display: flex; gap: 12px; padding: var(--pad) var(--pad) 0;
+  overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none;
+}
+
+.app-nav::-webkit-scrollbar { display: none; }
+
+.app-nav-item {
+  padding: 10px 16px; border: 1px solid var(--border); border-radius: 999px;
+  font-size: 13px; font-weight: 500; white-space: nowrap; cursor: pointer;
+  transition: all 0.3s var(--ease); color: var(--text-mid);
+  background: transparent;
+}
+
+.app-nav-item.active { background: var(--espresso); color: var(--ivory); border-color: var(--espresso); }
+.app-nav-item:hover { border-color: var(--text); }
+
+.screen { display: none; }
+.screen.active { display: block; animation: fadeUp 0.4s var(--ease-out) both; }
+
+.screen-pad { padding: 0; }
+.screen-pad > * + * { border-top: 1px solid var(--border); padding-top: var(--pad); margin-top: var(--pad); }
+
+.booking-section { padding: var(--pad) 0; }
+.booking-section-title { font-family: 'Playfair Display', 'Playfair Display Fallback', serif; font-size: 20px; font-weight: 500; margin-bottom: 20px; color: var(--espresso); }
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+
+.tile {
+  padding: 16px; border: 1px solid var(--border); border-radius: var(--r);
+  cursor: pointer; transition: all 0.3s var(--ease);
+  text-align: center;
+}
+
+.tile:hover { border-color: var(--gold); background: var(--gold-pale); }
+.tile.selected { background: var(--espresso); color: var(--ivory); border-color: var(--espresso); }
+
+.tile-label { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-soft); margin-bottom: 6px; }
+.tile-value { font-family: 'Playfair Display', 'Playfair Display Fallback', serif; font-size: 18px; font-weight: 500; }
+
+.btn-primary {
+  display: block; width: 100%; padding: 14px; margin-top: 24px;
+  background: var(--espresso); color: var(--ivory); border: none; border-radius: var(--r);
+  font-family: 'Jost', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 14px; font-weight: 500; letter-spacing: 0.05em;
+  cursor: pointer; transition: all 0.3s var(--ease);
+}
+
+.btn-primary:hover { background: var(--espresso-mid); transform: translateY(-2px); }
+.btn-primary:active { transform: scale(0.98); }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btn-outline {
+  padding: 12px 20px; border: 1px solid var(--text-soft); border-radius: var(--r);
+  background: transparent; color: var(--text); cursor: pointer;
+  font-family: 'Jost', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 13px; font-weight: 500;
+  transition: all 0.3s var(--ease);
+}
+
+.btn-outline:hover { border-color: var(--text); }
+
+/* ── ABOUT SECTION ── */
+.sabout { padding: var(--pad) 0; }
+.sabout-inner { max-width: 800px; margin: 0 auto; }
+.sabout-label { font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; }
+.sabout-title { font-family: 'Playfair Display', 'Playfair Display Fallback', serif; font-size: 36px; font-weight: 500; margin-bottom: 20px; line-height: 1.2; }
+.sabout-text { font-size: 16px; line-height: 1.7; color: var(--text-mid); margin-bottom: 32px; }
+.sabout-countries { display: flex; gap: 12px; flex-wrap: wrap; }
+.country-chip { padding: 8px 16px; border: 1px solid var(--border-gold); border-radius: 999px; font-size: 13px; background: var(--gold-pale); }
+
+/* ── SERVICES ── */
+.sservices { padding: var(--pad) 0; background: var(--ivory-deep); }
+.sservices-inner { max-width: 1000px; margin: 0 auto; padding: 0 var(--pad); }
+.ssec-head { margin-bottom: 48px; max-width: 600px; }
+.ssec-title { font-family: 'Playfair Display', 'Playfair Display Fallback', serif; font-size: 38px; font-weight: 500; margin-bottom: 16px; }
+.ssec-desc { font-size: 16px; color: var(--text-mid); line-height: 1.6; }
+
+.sservices-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 28px; }
+
+.svc-tile {
+  padding: 28px; background: var(--ivory); border-radius: var(--r);
+  border-left: 3px solid var(--gold); cursor: pointer;
+  transition: all 0.3s var(--ease);
+}
+
+.svc-tile:hover { transform: translateX(8px); box-shadow: 0 12px 24px rgba(0,0,0,0.08); }
+
+.svc-tile-num {
+  font-family: 'Playfair Display', 'Playfair Display Fallback', serif;
+  font-size: 42px; font-weight: 700; color: var(--gold); margin-bottom: 12px;
+}
+
+.svc-tile-name {
+  font-family: 'Playfair Display', 'Playfair Display Fallback', serif;
+  font-size: 20px; font-weight: 500; margin-bottom: 12px;
+}
+
+.svc-tile-desc { font-size: 14px; color: var(--text-mid); line-height: 1.6; margin-bottom: 16px; }
+
+.svc-tile-link {
+  font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--gold); font-weight: 600; cursor: pointer;
+}
+
+/* ── GALLERY ── */
+.sgallery { padding: var(--pad) 0; background: var(--ivory); }
+.sgallery-head { max-width: 1000px; margin: 0 auto var(--pad); padding: 0 var(--pad); }
+.sgallery-label { font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; }
+.sgallery-title { font-family: 'Playfair Display', 'Playfair Display Fallback', serif; font-size: 38px; font-weight: 500; }
+
+.sgallery-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px;
+  max-width: 1000px; margin: 0 auto; padding: 0 var(--pad);
+}
+
+.gal-item {
+  position: relative; overflow: hidden; border-radius: var(--r);
+  aspect-ratio: 1; cursor: pointer; background: var(--espresso-light);
+}
+
+.gal-img {
+  width: 100%; height: 100%; object-fit: cover;
+  transition: transform 0.6s var(--ease-out);
+}
+
+.gal-item:hover .gal-img { transform: scale(1.08); }
+
+.gal-overlay {
+  position: absolute; inset: 0; background: rgba(26,18,8,0.6);
+  display: flex; align-items: flex-end; padding: 20px;
+  opacity: 0; transition: opacity 0.4s var(--ease);
+}
+
+.gal-item:hover .gal-overlay { opacity: 1; }
+
+.gal-label {
+  font-family: 'Playfair Display', 'Playfair Display Fallback', serif;
+  color: #EFF0ED; font-size: 18px; font-weight: 500;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+/* ── LOCATIONS ── */
+#slocations { padding: var(--pad) 0; background: var(--ivory-deep); }
+.slocs { max-width: 1000px; margin: 0 auto; padding: 0 var(--pad); }
+.slocs-head { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 48px; gap: 20px; }
+.slocs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
+
+.loc-tile {
+  padding: 24px; background: var(--ivory); border-radius: var(--r);
+  border: 1px solid var(--border); cursor: pointer;
+  position: relative; transition: all 0.3s var(--ease);
+}
+
+.loc-tile:hover { box-shadow: 0 12px 24px rgba(0,0,0,0.1); transform: translateY(-4px); }
+.loc-tile.flagship { border-color: var(--gold); background: var(--gold-pale); }
+
+.loc-badge-f {
+  position: absolute; top: 12px; right: 12px;
+  font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--gold); font-weight: 700;
+}
+
+.loc-name-t { font-family: 'Playfair Display', 'Playfair Display Fallback', serif; font-size: 18px; font-weight: 600; margin-bottom: 6px; }
+.loc-city-t { font-size: 12px; color: var(--text-soft); margin-bottom: 12px; }
+.loc-ph { font-size: 13px; color: var(--text); margin-bottom: 12px; font-weight: 500; }
+.loc-dir { font-size: 12px; color: var(--gold); text-decoration: underline; cursor: pointer; }
+
+/* ── TESTIMONIALS ── */
+.stests { padding: var(--pad) 0; background: var(--ivory); }
+.stests-inner { max-width: 900px; margin: 0 auto; padding: 0 var(--pad); }
+.ttest-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 28px; margin-top: 32px; }
+
+.ttest-card {
+  padding: 28px; background: var(--ivory-deep); border-radius: var(--r);
+  border-left: 2px solid var(--gold);
+}
+
+.ttest-stars { font-size: 14px; color: var(--gold); margin-bottom: 16px; }
+.ttest-quote { font-size: 15px; line-height: 1.7; color: var(--text-mid); margin-bottom: 18px; font-style: italic; }
+.ttest-rule { height: 1px; background: var(--border-gold); margin-bottom: 14px; }
+.ttest-name { font-family: 'Playfair Display', 'Playfair Display Fallback', serif; font-size: 14px; font-weight: 600; }
+.ttest-loc { font-size: 11px; color: var(--text-soft); }
+
+/* ── CTA SECTION ── */
+.scta {
+  position: relative; min-height: 400px; overflow: hidden;
+  background: url('https://images.unsplash.com/photo-1552895638-f7db92d348fe?w=1600&q=80&auto=format&fit=crop') center/cover no-repeat;
+  background-color: var(--espresso);
+}
+
+.scta-img { position: absolute; inset: 0; z-index: 0; }
+.scta-overlay { position: absolute; inset: 0; z-index: 1; background: rgba(26,18,8,0.7); }
+.scta-content {
+  position: relative; z-index: 2; height: 100%;
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+  padding: var(--pad); text-align: center;
+}
+
+.scta-title {
+  font-family: 'Playfair Display', 'Playfair Display Fallback', serif;
+  font-size: clamp(32px, 8vw, 48px); font-weight: 500;
+  color: #EFF0ED; margin-bottom: 16px; text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.scta-sub { color: rgba(255,255,255,0.8); font-size: 16px; margin-bottom: 32px; }
+.scta-btn {
+  padding: 14px 36px; background: var(--gold); color: var(--espresso);
+  border: none; border-radius: var(--r); font-weight: 600;
+  cursor: pointer; transition: all 0.3s var(--ease);
+}
+
+.scta-btn:hover { background: var(--gold-bright); transform: translateY(-2px); }
+
+/* ── FOOTER ── */
+.sfooter { background: var(--espresso); color: var(--ivory); padding: 48px var(--pad) 32px; }
+.sfooter-inner {
+  max-width: 1000px; margin: 0 auto;
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 40px;
+  margin-bottom: 32px;
+}
+
+.sfooter-brand-name {
+  font-family: 'Playfair Display', 'Playfair Display Fallback', serif;
+  font-size: 24px; font-weight: 700; margin-bottom: 8px;
+}
+
+.sfooter-tagline { font-size: 13px; line-height: 1.6; color: rgba(255,255,255,0.65); margin-top: 16px; }
+.sfooter-col-title { font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 16px; color: var(--gold); }
+.sfooter-links { display: flex; flex-direction: column; gap: 12px; }
+.sfooter-link { font-size: 13px; color: rgba(255,255,255,0.8); cursor: pointer; transition: color 0.3s; }
+.sfooter-link:hover { color: var(--gold); }
+
+.sfooter-contact-item { font-size: 13px; color: rgba(255,255,255,0.8); margin-bottom: 8px; }
+.sfooter-bottom {
+  border-top: 1px solid rgba(184,150,90,0.2); padding-top: 24px;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+}
+
+.sfooter-copy { font-size: 11px; color: rgba(255,255,255,0.55); }
+
+/* ── NAVIGATION BAR ── */
+.snav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: transparent; padding: 20px var(--pad);
+  display: flex; justify-content: space-between; align-items: center;
+  transition: all 0.3s var(--ease);
+}
+
+.snav.stuck {
+  background: rgba(248,244,238,0.95); backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+  padding: 14px var(--pad);
+}
+
+.snav-logo {
+  font-family: 'Playfair Display', 'Playfair Display Fallback', serif;
+  font-size: 14px; font-weight: 700;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--espresso);
+}
+
+.snav.stuck .snav-logo { color: var(--espresso); }
+
+.snav-links { display: flex; gap: 32px; align-items: center; }
+.snav-link {
+  font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--text-soft); cursor: pointer; transition: color 0.3s;
+  text-decoration: none;
+}
+
+.snav-link:hover { color: var(--text); }
+.snav-cta {
+  padding: 10px 20px; background: var(--espresso);
+  color: var(--ivory); border-radius: var(--r);
+  font-size: 12px; font-weight: 600; cursor: pointer;
+  transition: background 0.3s;
+}
+
+.snav-cta:hover { background: var(--espresso-mid); }
+
+/* ── TOAST NOTIFICATION ── */
+#toast {
+  position: fixed; bottom: 20px; left: 20px; z-index: 1000;
+  padding: 12px 20px; background: var(--espresso); color: var(--ivory);
+  border-radius: 3px; font-size: 13px;
+  opacity: 0; transform: translateY(20px);
+  transition: all 0.3s var(--ease);
+  pointer-events: none;
+}
+
+#toast.on {
+  opacity: 1; transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  :root { --pad: 20px; }
+  .splash-hero-tag { font-size: 9px; }
+  .splash-title { font-size: clamp(40px, 12vw, 56px); }
+  .splash-subtitle { font-size: 15px; margin-bottom: 32px; }
+  .splash-cards-row { flex-direction: column; }
+  .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  .app-nav { gap: 8px; }
+  .slocs-head { flex-direction: column; }
+  .sfooter-inner { grid-template-columns: 1fr; }
+  .snav-links { gap: 16px; }
+}
+
+@media (max-width: 480px) {
+  :root { --pad: 16px; }
+  .splash-title { font-size: clamp(32px, 10vw, 48px); }
+  .ssec-title { font-size: 28px; }
+  .svc-tile { padding: 20px; }
+  .ttest-grid { grid-template-columns: 1fr; }
+}
+
+/* ── DARK MODE SUPPORT ── */
+@media (prefers-color-scheme: dark) {
+  body { background: var(--ivory); }
+}
+
+/* ── WEBFONT LOADING STATE ── */
+.wf-loading body { opacity: 0.98; }
+.wf-active .splash-title, .wf-active .splash-subtitle { transition: opacity 0.3s; }
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+<div id="toast"></div>
+
+<div id="root"></div>
+
+<script>
+// ─── STATE & DATA ─────────────────────────────────────────────────────────
+const S = {
+  view: 'website',
+  screen: 1,
+  loc: null,
+  cat: null,
+  svcId: null,
+  specId: null,
+  date: null,
+  time: null,
+  cm: new Date().getMonth(),
+  cy: new Date().getFullYear(),
+  name: '',
+  phone: ''
+};
+
+const I = {
+  ph: '📞',
+  ig: '📷'
+};
+
+const svcData = [
+  [1, 'Hair Transformation', 'Cuts, colors, treatments — from classic to avant-garde. Raju sir brings three decades of international salon mastery.'],
+  [2, 'Bridal & Occasion Wear', 'Full makeup, hair, and styling for your most important moments. Traditional or modern — we deliver perfection.'],
+  [3, 'Skin & Wellness', 'Advanced facials, peels, threading. Science-backed beauty for every skin type.'],
+  [4, 'Beard Artistry', 'Grooming redefined. Sculpted shapes, oils, and conditioning for the modern gentleman.'],
+  [5, 'Nail Design', 'Manicure, pedicure, nail art. Premium products, meticulous execution.'],
+  [6, 'Luxury Spa', 'Body treatments, massages, aromatherapy. Pure restoration.']
+];
+
+const galleryData = [
+  {src: 'https://images.unsplash.com/photo-1562599810-a0d3c22ac11f?w=500&q=80&auto=format&fit=crop', label: 'Hair Color'},
+  {src: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&q=80&auto=format&fit=crop', label: 'Styling'},
+  {src: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=500&q=80&auto=format&fit=crop', label: 'Bridal'},
+  {src: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=500&q=80&auto=format&fit=crop', label: 'Makeup'},
+  {src: 'https://images.unsplash.com/photo-1520975867468-30dbb6de0f0d?w=500&q=80&auto=format&fit=crop', label: 'Grooming'},
+  {src: 'https://images.unsplash.com/photo-1570545887323-415eeb4c4c1e?w=500&q=80&auto=format&fit=crop', label: 'Wellness'}
+];
+
+const svcs = svcData;
+
+// ─── CURSOR TRACKING ─────────────────────────────────────────────────────
+document.addEventListener('mousemove', (e) => {
+  const c = document.getElementById('cursor');
+  const r = document.getElementById('cursor-ring');
+  if(c && r) {
+    c.style.left = e.clientX + 'px';
+    c.style.top = e.clientY + 'px';
+    r.style.left = e.clientX + 'px';
+    r.style.top = e.clientY + 'px';
+  }
+}, {passive: true});
+
+document.addEventListener('mouseleave', () => {
+  const c = document.getElementById('cursor');
+  const r = document.getElementById('cursor-ring');
+  if(c && r) { c.style.opacity = '0'; r.style.opacity = '0'; }
+});
+
+document.addEventListener('mouseenter', () => {
+  const c = document.getElementById('cursor');
+  const r = document.getElementById('cursor-ring');
+  if(c && r) { c.style.opacity = '1'; r.style.opacity = '1'; }
+});
+
+// ─── RENDER & NAVIGATION ──────────────────────────────────────────────────
+function render() {
+  const root = document.getElementById('root');
+  root.innerHTML = S.view === 'website' ? renderWebsite() : renderBooking();
+  bindSite();
+}
+
+function go(v, s=1) { S.view=v; S.screen=s; window.scrollTo(0,0); render(); }
+
+function renderWebsite() {
+  return `<nav id="snav" class="snav">
+    <div class="snav-logo">Raju Reyaz</div>
+    <div class="snav-links">
+      <a class="snav-link clickable" onclick="ss('sabout')">About</a>
+      <a class="snav-link clickable" onclick="ss('sservices')">Services</a>
+      <a class="snav-link clickable" onclick="ss('slocations')">Locations</a>
+      <button class="snav-cta clickable" onclick="go('booking',1)">Book Now</button>
+    </div>
+  </nav>
+  ${renderSplash()}
+  ${renderAbout()}
+  ${renderServices()}
+  ${renderGallery()}
+  ${renderLocations()}
+  ${renderTestimonials()}
+  ${renderCTA()}
+  ${renderFooter()}`;
+}
+
+function renderBooking() {
+  return `<div class="app-wrap">
+    <div class="app-bar">
+      <button class="app-back clickable" onclick="go('website')">←</button>
+      <div class="app-title">${['Services', 'Specialist', 'Date', 'Time', 'Details', 'Confirmed!'][S.screen-1] || 'Book'}</div>
+      <button class="app-close clickable" onclick="go('website')">✕</button>
+    </div>
+    <div class="app-body">
+      ${S.screen===1 ? renderBookingScreen1() : ''}
+      ${S.screen===2 ? renderBookingScreen2() : ''}
+      ${S.screen===3 ? renderBookingScreen3() : ''}
+      ${S.screen===4 ? renderBookingScreen4() : ''}
+      ${S.screen===5 ? renderBookingScreen5() : ''}
+      ${S.screen===6 ? renderBookingScreen6() : ''}
+    </div>
+  </div>`;
+}
+
+function renderSplash() {
+  return `<section class="splash grain">
+    <div class="splash-bg"></div>
+    <div class="splash-overlay"></div>
+    <div class="splash-content">
+      <div class="splash-top">
+        <div class="splash-wordmark">Raju Reyaz</div>
+        <div class="splash-est">Est. 1970</div>
+      </div>
+      <div class="splash-hero-text">
+        <div class="splash-hero-tag">Guwahati's Premier Salon</div>
+        <h1 class="splash-title"><span class="splash-title-plain">Raju Reyaz</span> The Atelier</h1>
+        <p class="splash-subtitle">Five decades of artistry, four continents of training. Where transformation is an art form.</p>
+      </div>
+      <div class="splash-cards-row">
+        <div class="splash-card-v2 clickable" onclick="ss('sservices')">
+          <div class="splash-card-bg" style="background-image:url('https://images.unsplash.com/photo-1552895638-f7db92d348fe?w=500&q=80&auto=format&fit=crop')"></div>
+          <div class="splash-card-dim"></div>
+          <div class="splash-card-body">
+            <div class="splash-card-label">Explore</div>
+            <div class="splash-card-v2-title">Services</div>
+            <div class="splash-card-v2-sub">Hair, makeup, grooming & more</div>
+          </div>
+          <div class="splash-card-arrow-v2">→</div>
+        </div>
+        <div class="splash-card-v2 clickable" onclick="go('booking',1)">
+          <div class="splash-card-bg" style="background-image:url('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&q=80&auto=format&fit=crop')"></div>
+          <div class="splash-card-dim"></div>
+          <div class="splash-card-body">
+            <div class="splash-card-label">Book</div>
+            <div class="splash-card-v2-title">Your Visit</div>
+            <div class="splash-card-v2-sub">Instant appointment booking</div>
+          </div>
+          <div class="splash-card-arrow-v2">→</div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <div class="marquee-wrap">
+    <div class="marquee-track">
+      <div class="marquee-item">✨ AWARD-WINNING SALON ✨</div>
+      <div class="marquee-dot">•</div>
+      <div class="marquee-item">✨ INTERNATIONAL ARTISTRY ✨</div>
+      <div class="marquee-dot">•</div>
+      <div class="marquee-item">✨ TRUSTED SINCE 1970 ✨</div>
+      <div class="marquee-dot">•</div>
+      <div class="marquee-item">✨ AWARD-WINNING SALON ✨</div>
+      <div class="marquee-dot">•</div>
+    </div>
+  </div>`;
+}
+
+function renderAbout() {
+  return `<section id="sabout" class="sabout">
+    <div class="sabout-inner">
+      <div class="sabout-label">Our Story</div>
+      <h2 class="sabout-title">Five Decades of Beauty</h2>
+      <p class="sabout-text">We believe beauty is not a luxury — it is an expression of self. For over fifty years, we have walked alongside generations of families, witnessing transformations great and small.</p>
+      <div class="sabout-countries">
+        <span class="country-chip">🇿🇦 South Africa</span>
+        <span class="country-chip">🇦🇿 Baku</span>
+        <span class="country-chip">🇦🇪 Dubai</span>
+        <span class="country-chip">🇹🇭 Thailand</span>
+      </div>
+    </div>
+  </section>`;
+}
+
+function renderServices() {
+  return `<section id="sservices" class="sservices">
+    <div class="sservices-inner">
+      <div class="ssec-head">
+        <h2 class="ssec-title">The Art of You</h2>
+        <p class="ssec-desc">World-class services delivered by artists trained across four continents, right here in the heart of Guwahati. Every visit is a bespoke experience.</p>
+      </div>
+      <div class="sservices-grid">
+        ${svcs.map(([n,name,desc])=>`<div class="svc-tile clickable">
+          <div class="svc-tile-num">${n}</div>
+          <div class="svc-tile-name">${name}</div>
+          <div class="svc-tile-desc">${desc}</div>
+          <div class="svc-tile-link" onclick="go('booking',2)">Book this service →</div>
+        </div>`).join('')}
+      </div>
+    </div>
+  </section>`;
+}
+
+function renderGallery() {
+  return `<section id="sgallery" class="sgallery">
+    <div class="sgallery-head">
+      <div class="sgallery-label">Our Work</div>
+      <div class="sgallery-title">Transformations</div>
+    </div>
+    <div class="sgallery-grid">
+      ${galleryData.map(g=>`<div class="gal-item clickable">
+        <img class="gal-img" src="${g.src}" alt="${g.label}" loading="lazy">
+        <div class="gal-overlay"><span class="gal-label">${g.label}</span></div>
+      </div>`).join('')}
+    </div>
+  </section>`;
+}
+
+function renderLocations() {
+  return `<section id="slocations">
+    <div class="slocs">
+      <div class="slocs-head">
+        <div>
+          <div class="sabout-label">Find Us</div>
+          <h2 class="ssec-title" style="margin-bottom:0">Our Locations</h2>
+        </div>
+        <button class="btn-outline clickable" onclick="go('booking',1)">Book at Any Location</button>
+      </div>
+      <div class="slocs-grid">
+        ${[{n:'Ulubari',f:true},{n:'Zoo Road'},{n:'Beltola'},{n:'Jalukbari'},{n:'Lal Ganesh'},{n:'Narengi'},{n:'Chandmari'}].map(l=>`<div class="loc-tile clickable ${l.f?'flagship':''}">
+          ${l.f?'<span class="loc-badge-f">Flagship</span>':''}
+          <div class="loc-name-t">${l.n}</div>
+          <div class="loc-city-t">Guwahati, Assam</div>
+          <div class="loc-ph">${I.ph} 98640 54398</div>
+          <div class="loc-dir">Get Directions →</div>
+        </div>`).join('')}
+      </div>
+    </div>
+  </section>`;
+}
+
+function renderTestimonials() {
+  return `<section class="stests">
+    <div class="stests-inner">
+      <div class="sabout-label">Client Stories</div>
+      <h2 class="ssec-title">Words From Our Guests</h2>
+      <div class="ttest-grid">
+        <div class="ttest-card">
+          <div class="ttest-stars">★★★★★</div>
+          <div class="ttest-quote">"I've been coming to Raju Reyaz for twelve years. There is simply no other salon in Guwahati that understands hair at this level."</div>
+          <div class="ttest-rule"></div>
+          <div class="ttest-name">Priya S.</div><div class="ttest-loc">Ulubari location</div>
+        </div>
+        <div class="ttest-card">
+          <div class="ttest-stars">★★★★★</div>
+          <div class="ttest-quote">"My bridal look was everything I dreamed of. The team made me feel like absolute royalty on my most important day."</div>
+          <div class="ttest-rule"></div>
+          <div class="ttest-name">Ankita B.</div><div class="ttest-loc">Zoo Road location</div>
+        </div>
+        <div class="ttest-card">
+          <div class="ttest-stars">★★★★★</div>
+          <div class="ttest-quote">"Raju sir himself attended to my hair. The international techniques he brings to Guwahati are truly unmatched."</div>
+          <div class="ttest-rule"></div>
+          <div class="ttest-name">Rahul D.</div><div class="ttest-loc">Beltola location</div>
+        </div>
+      </div>
+    </div>
+  </section>`;
+}
+
+function renderCTA() {
+  return `<section class="scta">
+    <div class="scta-img"></div>
+    <div class="scta-overlay"></div>
+    <div class="scta-content">
+      <h2 class="scta-title">Ready for Your<br>Transformation?</h2>
+      <p class="scta-sub">Book your appointment in under two minutes.</p>
+      <button class="scta-btn clickable" onclick="go('booking',1)">Reserve Your Visit</button>
+    </div>
+  </section>`;
+}
+
+function renderFooter() {
+  return `<footer class="sfooter">
+    <div class="sfooter-inner">
+      <div>
+        <div class="sfooter-brand-name">Raju Reyaz</div>
+        <div style="font-size:10px;color:rgba(184,150,90,0.5);letter-spacing:0.25em;text-transform:uppercase;margin-top:2px">Est. 1970 · Guwahati</div>
+        <div class="sfooter-tagline">Guwahati's most trusted name in beauty and grooming. Internationally trained, locally beloved for over five decades.</div>
+      </div>
+      <div>
+        <div class="sfooter-col-title">Navigate</div>
+        <div class="sfooter-links">
+          <a class="sfooter-link clickable" onclick="ss('sabout')">About</a>
+          <a class="sfooter-link clickable" onclick="ss('sservices')">Services</a>
+          <a class="sfooter-link clickable" onclick="ss('slocations')">Locations</a>
+          <a class="sfooter-link clickable" onclick="go('booking',1)">Book Now</a>
+        </div>
+      </div>
+      <div>
+        <div class="sfooter-col-title">Connect</div>
+        <div>
+          <div class="sfooter-contact-item">${I.ph} 98640 54398</div>
+          <div class="sfooter-contact-item">${I.ig} @raju_reyaz</div>
+          <div class="sfooter-contact-item">${I.ig} @rajureyazsalon</div>
+        </div>
+      </div>
+      <div>
+        <div class="sfooter-col-title">Return</div>
+        <div class="sfooter-links">
+          <a class="sfooter-link clickable" onclick="go('splash')">← Home</a>
+        </div>
+      </div>
+    </div>
+    <div class="sfooter-bottom">
+      <span class="sfooter-copy">© 2025 Raju Reyaz Unisex Salon · All Rights Reserved</span>
+      <span class="sfooter-copy">Guwahati, Assam · India</span>
+    </div>
+  </footer>`;
+}
+
+function renderBookingScreen1() {
+  return `<div class="booking-section">
+    <h3 class="booking-section-title">Select a Service</h3>
+    <div class="sservices-grid">
+      ${svcs.map(([id,name,desc])=>`<div class="svc-tile clickable ${S.svcId===id?'selected':''}" onclick="selSvc(${id})">
+        <div class="svc-tile-name">${name}</div>
+        <div class="svc-tile-desc" style="font-size:13px">${desc}</div>
+      </div>`).join('')}
+    </div>
+    <button class="btn-primary" onclick="S.screen=2;render()" ${!S.svcId?'disabled':''}>Continue</button>
+  </div>`;
+}
+
+function renderBookingScreen2() {
+  return `<div class="booking-section">
+    <h3 class="booking-section-title">Choose a Specialist</h3>
+    <div class="grid-3">
+      ${['Raju Reyaz', 'Priya', 'Akash', 'Neha', 'Arjun', 'Deepika'].map((s,i)=>`<div class="tile clickable ${S.specId===i?'selected':''}" onclick="selSpec(${i})">
+        <div class="tile-value">${s}</div>
+      </div>`).join('')}
+    </div>
+    <button class="btn-primary" onclick="S.screen=3;render()" ${!S.specId?'disabled':''}>Continue</button>
+  </div>`;
+}
+
+function renderBookingScreen3() {
+  return `<div class="booking-section">
+    <h3 class="booking-section-title">Select a Date</h3>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+      <button class="btn-outline" onclick="chMon(-1)">← Prev</button>
+      <span style="font-weight:600">${new Date(S.cy,S.cm).toLocaleDateString('en',{month:'long',year:'numeric'})}</span>
+      <button class="btn-outline" onclick="chMon(1)">Next →</button>
+    </div>
+    <div class="grid-3">
+      ${Array.from({length:28}).map((_,i)=>{
+        const d=new Date(S.cy,S.cm,i+1);
+        return `<div class="tile clickable ${S.date===i?'selected':''}" onclick="selDate(${i})">
+          <div class="tile-label">${['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d.getDay()]}</div>
+          <div class="tile-value">${d.getDate()}</div>
+        </div>`;
+      }).join('')}
+    </div>
+    <button class="btn-primary" onclick="S.screen=4;render()" ${!S.date?'disabled':''}>Continue</button>
+  </div>`;
+}
+
+function renderBookingScreen4() {
+  return `<div class="booking-section">
+    <h3 class="booking-section-title">Choose a Time Slot</h3>
+    <div class="grid-2">
+      ${['09:00','09:30','10:00','10:30','11:00','11:30','14:00','14:30','15:00','15:30','16:00','16:30'].map(t=>`<div class="tile clickable ${S.time===t?'selected':''}" onclick="selTime('${t}')">
+        <div class="tile-value">${t}</div>
+      </div>`).join('')}
+    </div>
+    <button class="btn-primary" onclick="S.screen=5;render()" ${!S.time?'disabled':''}>Continue</button>
+  </div>`;
+}
+
+function renderBookingScreen5() {
+  return `<div class="booking-section">
+    <h3 class="booking-section-title">Your Details</h3>
+    <div style="margin-bottom:20px">
+      <label style="display:block;margin-bottom:6px;font-weight:600;font-size:13px">Full Name</label>
+      <input type="text" id="fn" placeholder="Your name" style="width:100%;padding:12px;border:1px solid var(--border);border-radius:2px;font-family:inherit;font-size:14px">
+    </div>
+    <div style="margin-bottom:20px">
+      <label style="display:block;margin-bottom:6px;font-weight:600;font-size:13px">Phone Number</label>
+      <input type="tel" id="fp" placeholder="Your phone" style="width:100%;padding:12px;border:1px solid var(--border);border-radius:2px;font-family:inherit;font-size:14px">
+    </div>
+    <div style="padding:16px;background:var(--gold-pale);border-radius:3px;margin-bottom:20px;font-size:13px">
+      <strong>${svcs.find(s=>s[0]===S.svcId)?.[1]}</strong><br>
+      ${new Date(S.cy,S.cm,S.date+1).toLocaleDateString('en',{weekday:'short',month:'short',day:'numeric'})}, ${S.time}
+    </div>
+    <button class="btn-primary" onclick="confirmBooking()">Confirm Booking</button>
+    <button class="btn-outline" style="width:100%;margin-top:12px" onclick="resetBook()">Cancel</button>
+  </div>`;
+}
+
+function renderBookingScreen6() {
+  return `<div class="booking-section" style="text-align:center;padding:40px 0">
+    <div style="font-size:48px;margin-bottom:20px">✓</div>
+    <h3 class="booking-section-title" style="margin-bottom:20px">Booking Confirmed!</h3>
+    <p style="font-size:15px;color:var(--text-mid);line-height:1.6;margin-bottom:24px">
+      <strong>${S.name}</strong><br>
+      ${svcs.find(s=>s[0]===S.svcId)?.[1]}<br>
+      ${new Date(S.cy,S.cm,S.date+1).toLocaleDateString('en',{weekday:'short',month:'long',day:'numeric'})}, ${S.time}
+    </p>
+    <p style="font-size:13px;color:var(--text-soft);margin-bottom:28px">
+      We've sent a confirmation to your number.<br>Questions? Call us at 98640 54398
+    </p>
+    <button class="btn-primary" onclick="go('website')">Return to Home</button>
+  </div>`;
+}
+
+// ─── INTERACTIONS ─────────────────────────────────────────────────────────────
+function selLoc(l) { S.loc = S.loc===l?null:l; render(); }
+function selCat(id) { S.cat=id; S.svcId=null; render(); }
+function selSvc(id) { S.svcId=id; render(); }
+function selSpec(id) { S.specId=id; render(); }
+function selDate(k) { S.date=k; S.time=null; render(); }
+function selTime(t) { S.time=t; render(); }
+function chMon(d) {
+  S.cm+=d;
+  if(S.cm>11){S.cm=0;S.cy++;}
+  if(S.cm<0){S.cm=11;S.cy--;}
+  render();
+}
+function confirmBooking() {
+  const n = document.getElementById('fn')?.value;
+  const p = document.getElementById('fp')?.value;
+  if(!n||!p){toast('Please enter your name and phone number');return;}
+  S.name=n; S.phone=p; S.screen=6;
+  window.scrollTo(0,0); render();
+}
+function resetBook() {
+  S.screen=1; S.cat=null; S.svcId=null; S.specId=null;
+  S.date=null; S.time=null; S.name=''; S.phone='';
+  render();
+}
+function ss(id) { document.getElementById(id)?.scrollIntoView({behavior:'smooth', block:'start'}); }
+function toast(msg) {
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('on');
+  setTimeout(()=>t.classList.remove('on'),3000);
+}
+function bindSite() {
+  if (S.view !== 'website') return;
+  window.addEventListener('scroll', ()=>{
+    const n = document.getElementById('snav');
+    if(n) n.classList.toggle('stuck', window.scrollY > 70);
+  }, {passive:true});
+}
+
+// ─── SERVICE WORKER ───────────────────────────────────────────────────────
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(e => console.log('SW registration failed:', e));
+}
+
+render();
+</script>
+</body>
+</html>
